@@ -10,7 +10,7 @@ import {
   Star,
 } from "lucide-react";
 
-type Candidate = Schema["Candidate"]["type"] & {
+type Candidate = Omit<Schema["Candidate"]["type"], "screeningResult"> & {
   screeningResult?: Schema["ScreeningResult"]["type"] | null;
 };
 

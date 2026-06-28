@@ -4,6 +4,7 @@ import { data } from "./data/resource";
 import { storage } from "./storage/resource";
 import { screenResume } from "./functions/screenResume/resource";
 import { PolicyStatement } from "aws-cdk-lib/aws-iam";
+import { Function as LambdaFunction } from "aws-cdk-lib/aws-lambda";
 
 const backend = defineBackend({
   auth,
@@ -14,19 +15,16 @@ const backend = defineBackend({
 
 // Grant the Lambda read access to the S3 bucket and Bedrock
 const resumeBucket = backend.storage.resources.bucket;
-const lambdaRole = backend.screenResume.resources.lambda.role!;
+const lambdaFn = backend.screenResume.resources.lambda as LambdaFunction;
 
 // S3 read access
-resumeBucket.grantRead(backend.screenResume.resources.lambda);
+resumeBucket.grantRead(lambdaFn);
 
 // Pass bucket name as env var
-backend.screenResume.resources.lambda.addEnvironment(
-  "STORAGE_BUCKET_NAME",
-  resumeBucket.bucketName
-);
+lambdaFn.addEnvironment("STORAGE_BUCKET_NAME", resumeBucket.bucketName);
 
 // Bedrock invocation access
-backend.screenResume.resources.lambda.addToRolePolicy(
+lambdaFn.addToRolePolicy(
   new PolicyStatement({
     actions: ["bedrock:InvokeModel"],
     resources: [

@@ -11,7 +11,7 @@ import { Briefcase, ChevronLeft, Upload, Users, Loader2 } from "lucide-react";
 const client = generateClient<Schema>();
 
 type Job = Schema["Job"]["type"];
-type Candidate = Schema["Candidate"]["type"] & {
+type Candidate = Omit<Schema["Candidate"]["type"], "screeningResult"> & {
   screeningResult?: Schema["ScreeningResult"]["type"] | null;
 };
 
@@ -79,7 +79,7 @@ export default function JobDetailPage() {
       });
 
       if (!candidate) continue;
-      setCandidates((prev) => [{ ...candidate, screeningResult: null } as Candidate, ...prev]);
+      setCandidates((prev) => [{ ...candidate, screeningResult: null } as unknown as Candidate, ...prev]);
       screenCandidate(candidate.id, key, job);
     }
     setShowUploader(false);
