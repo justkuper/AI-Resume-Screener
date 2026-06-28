@@ -1,5 +1,5 @@
 import { Link, useLocation } from "react-router-dom";
-import { LayoutDashboard, PlusCircle, LogOut, Brain, LogIn } from "lucide-react";
+import { FileSearch, LogOut, Brain, LogIn } from "lucide-react";
 import type { AuthUser } from "aws-amplify/auth";
 import { useGuest } from "../context/GuestContext";
 
@@ -14,8 +14,7 @@ export default function Layout({ children, user, signOut }: Props) {
   const { pathname } = useLocation();
 
   const navItems = [
-    { to: "/dashboard", icon: LayoutDashboard, label: "Dashboard" },
-    { to: "/jobs/new", icon: PlusCircle, label: "New Job" },
+    { to: "/analyze", icon: FileSearch, label: "Analyze Resume" },
   ];
 
   return (
@@ -42,9 +41,14 @@ export default function Layout({ children, user, signOut }: Props) {
           }}
         >
           <Brain size={24} color="#a5b4fc" />
-          <span style={{ color: "#fff", fontWeight: 700, fontSize: 15 }}>
-            RecruitAI
-          </span>
+          <div>
+            <div style={{ color: "#fff", fontWeight: 700, fontSize: 15 }}>
+              ResumeAI
+            </div>
+            <div style={{ color: "rgba(255,255,255,.4)", fontSize: 10, marginTop: 1 }}>
+              Resume Analyzer
+            </div>
+          </div>
         </div>
 
         {/* Nav */}
@@ -63,9 +67,7 @@ export default function Layout({ children, user, signOut }: Props) {
                   borderRadius: 8,
                   marginBottom: 4,
                   color: active ? "#fff" : "rgba(255,255,255,.6)",
-                  background: active
-                    ? "rgba(255,255,255,.12)"
-                    : "transparent",
+                  background: active ? "rgba(255,255,255,.12)" : "transparent",
                   fontWeight: active ? 600 : 400,
                   fontSize: 14,
                   transition: "all .15s",
@@ -78,7 +80,7 @@ export default function Layout({ children, user, signOut }: Props) {
           })}
         </nav>
 
-        {/* User + signout / guest */}
+        {/* User / guest footer */}
         <div
           style={{
             padding: "16px 20px",
@@ -88,7 +90,7 @@ export default function Layout({ children, user, signOut }: Props) {
           {isGuest ? (
             <>
               <div style={{ color: "rgba(255,255,255,.4)", fontSize: 11, marginBottom: 8, fontStyle: "italic" }}>
-                Guest mode — data not saved
+                Guest — data not saved
               </div>
               <button
                 onClick={onSignIn}

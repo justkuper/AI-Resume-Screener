@@ -13,11 +13,10 @@ const backend = defineBackend({
   screenResume,
 });
 
-// Grant the Lambda read access to the S3 bucket and Bedrock
 const resumeBucket = backend.storage.resources.bucket;
 const lambdaFn = backend.screenResume.resources.lambda as LambdaFunction;
 
-// S3 read access
+// S3 read access so Lambda can fetch uploaded resumes
 resumeBucket.grantRead(lambdaFn);
 
 // Pass bucket name as env var
