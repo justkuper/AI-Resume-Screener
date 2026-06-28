@@ -1,6 +1,7 @@
 import { Link, useLocation } from "react-router-dom";
-import { LayoutDashboard, PlusCircle, LogOut, Brain } from "lucide-react";
+import { LayoutDashboard, PlusCircle, LogOut, Brain, LogIn } from "lucide-react";
 import type { AuthUser } from "aws-amplify/auth";
+import { useGuest } from "../context/GuestContext";
 
 interface Props {
   children: React.ReactNode;
@@ -9,6 +10,7 @@ interface Props {
 }
 
 export default function Layout({ children, user, signOut }: Props) {
+  const { isGuest, onSignIn } = useGuest();
   const { pathname } = useLocation();
 
   const navItems = [
@@ -76,34 +78,61 @@ export default function Layout({ children, user, signOut }: Props) {
           })}
         </nav>
 
-        {/* User + signout */}
+        {/* User + signout / guest */}
         <div
           style={{
             padding: "16px 20px",
             borderTop: "1px solid rgba(255,255,255,.1)",
           }}
         >
-          <div
-            style={{ color: "rgba(255,255,255,.5)", fontSize: 12, marginBottom: 8 }}
-          >
-            {user?.signInDetails?.loginId}
-          </div>
-          <button
-            onClick={signOut}
-            style={{
-              display: "flex",
-              alignItems: "center",
-              gap: 8,
-              color: "rgba(255,255,255,.6)",
-              background: "transparent",
-              border: "none",
-              fontSize: 13,
-              padding: "6px 0",
-            }}
-          >
-            <LogOut size={14} />
-            Sign out
-          </button>
+          {isGuest ? (
+            <>
+              <div style={{ color: "rgba(255,255,255,.4)", fontSize: 11, marginBottom: 8, fontStyle: "italic" }}>
+                Guest mode — data not saved
+              </div>
+              <button
+                onClick={onSignIn}
+                style={{
+                  display: "flex",
+                  alignItems: "center",
+                  gap: 8,
+                  color: "#a5b4fc",
+                  background: "transparent",
+                  border: "none",
+                  fontSize: 13,
+                  padding: "6px 0",
+                  fontWeight: 600,
+                  cursor: "pointer",
+                }}
+              >
+                <LogIn size={14} />
+                Sign in / Sign up
+              </button>
+            </>
+          ) : (
+            <>
+              <div style={{ color: "rgba(255,255,255,.5)", fontSize: 12, marginBottom: 8 }}>
+                {user?.signInDetails?.loginId}
+              </div>
+              <button
+                onClick={signOut}
+                style={{
+                  display: "flex",
+                  alignItems: "center",
+                  gap: 8,
+                  color: "rgba(255,255,255,.6)",
+                  background: "transparent",
+                  border: "none",
+                  fontSize: 13,
+                  padding: "6px 0",
+                  cursor: "pointer",
+                }}
+              >
+                <LogOut size={14} />
+                Sign out
+              </button>
+            </>
+          )}
         </div>
       </aside>
 

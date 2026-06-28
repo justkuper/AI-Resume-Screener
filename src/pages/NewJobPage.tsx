@@ -3,12 +3,17 @@ import { useNavigate } from "react-router-dom";
 import { generateClient } from "aws-amplify/data";
 import type { Schema } from "../../amplify/data/resource";
 import { Briefcase, ChevronLeft } from "lucide-react";
+import { useGuest } from "../context/GuestContext";
+import GuestBanner from "../components/GuestBanner";
 
 const client = generateClient<Schema>();
 
 export default function NewJobPage() {
+  const { isGuest } = useGuest();
   const navigate = useNavigate();
   const [saving, setSaving] = useState(false);
+
+  if (isGuest) return <GuestBanner />;
   const [form, setForm] = useState({
     title: "",
     description: "",

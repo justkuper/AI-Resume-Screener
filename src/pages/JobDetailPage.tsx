@@ -7,6 +7,8 @@ import type { Schema } from "../../amplify/data/resource";
 import ResumeUploader from "../components/ResumeUploader";
 import CandidateCard from "../components/CandidateCard";
 import { Briefcase, ChevronLeft, Upload, Users, Loader2 } from "lucide-react";
+import { useGuest } from "../context/GuestContext";
+import GuestBanner from "../components/GuestBanner";
 
 const client = generateClient<Schema>();
 
@@ -16,8 +18,11 @@ type Candidate = Omit<Schema["Candidate"]["type"], "screeningResult"> & {
 };
 
 export default function JobDetailPage() {
+  const { isGuest } = useGuest();
   const { jobId } = useParams<{ jobId: string }>();
   const navigate = useNavigate();
+
+  if (isGuest) return <GuestBanner />;
 
   const [job, setJob] = useState<Job | null>(null);
   const [candidates, setCandidates] = useState<Candidate[]>([]);

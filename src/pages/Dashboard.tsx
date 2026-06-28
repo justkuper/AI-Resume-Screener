@@ -3,6 +3,8 @@ import { Link } from "react-router-dom";
 import { generateClient } from "aws-amplify/data";
 import type { Schema } from "../../amplify/data/resource";
 import { Briefcase, Users, TrendingUp, PlusCircle, ChevronRight } from "lucide-react";
+import { useGuest } from "../context/GuestContext";
+import GuestBanner from "../components/GuestBanner";
 
 const client = generateClient<Schema>();
 
@@ -15,12 +17,14 @@ interface Job {
 }
 
 export default function Dashboard() {
+  const { isGuest } = useGuest();
   const [jobs, setJobs] = useState<Job[]>([]);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    loadJobs();
-  }, []);
+    if (!isGuest) loadJobs();
+    else setLoading(false);
+  }, [isGuest]);
 
   async function loadJobs() {
     try {
@@ -32,6 +36,8 @@ export default function Dashboard() {
   }
 
   const open = jobs.filter((j) => j.status === "OPEN" || !j.status).length;
+
+  if (isGuest) return <GuestBanner />;
 
   return (
     <div style={{ padding: "32px 40px" }}>
