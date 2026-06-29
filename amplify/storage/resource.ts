@@ -7,7 +7,7 @@ export const storage = defineStorage({
     // Using allow.authenticated() avoids identity-pool ID format mismatches
     // that occur with allow.entity("identity") and the {entity_id} pattern.
     "resumes/*": [
-      allow.authenticated().to(["read", "write", "delete"]),
+      allow.authenticated.to(["read", "write", "delete"]),
     ],
   }),
 });
