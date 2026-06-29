@@ -22,7 +22,7 @@ resumeBucket.grantRead(lambdaFn);
 // Pass bucket name and model ID as env vars
 lambdaFn.addEnvironment("STORAGE_BUCKET_NAME", resumeBucket.bucketName);
 // Claude Sonnet 4.6 — use US geo cross-region ID (us-east-1 has no in-region capacity)
-lambdaFn.addEnvironment("BEDROCK_MODEL_ID", "us.anthropic.claude-sonnet-4-6");
+lambdaFn.addEnvironment("BEDROCK_MODEL_ID", "us.anthropic.claude-sonnet-4-6"); // geo ID routes within US regardless of source region
 
 // Bedrock invocation — cover both foundation-model and inference-profile ARN formats
 lambdaFn.addToRolePolicy(
@@ -32,5 +32,17 @@ lambdaFn.addToRolePolicy(
       "arn:aws:bedrock:*::foundation-model/anthropic.claude*",
       "arn:aws:bedrock:*:*:inference-profile/*anthropic.claude*",
     ],
+  })
+);
+
+// AWS Marketplace permissions required for Anthropic models served via Marketplace
+lambdaFn.addToRolePolicy(
+  new PolicyStatement({
+    actions: [
+      "aws-marketplace:ViewSubscriptions",
+      "aws-marketplace:Subscribe",
+      "aws-marketplace:Unsubscribe",
+    ],
+    resources: ["*"],
   })
 );
