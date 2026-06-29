@@ -4,8 +4,8 @@ import {
   InvokeModelCommand,
 } from "@aws-sdk/client-bedrock-runtime";
 import type { AppSyncResolverHandler } from "aws-lambda";
-// @ts-expect-error — pdf-parse has no bundled types
-import pdfParse from "pdf-parse";
+// @ts-expect-error — pdf-parse/lib has no bundled types
+import pdfParse from "pdf-parse/lib/pdf-parse.js";
 
 const s3 = new S3Client({ region: process.env.AWS_REGION });
 const bedrock = new BedrockRuntimeClient({
