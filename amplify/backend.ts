@@ -21,14 +21,16 @@ resumeBucket.grantRead(lambdaFn);
 
 // Pass bucket name and model ID as env vars
 lambdaFn.addEnvironment("STORAGE_BUCKET_NAME", resumeBucket.bucketName);
-lambdaFn.addEnvironment("BEDROCK_MODEL_ID", "anthropic.claude-3-7-sonnet-20250219-v1:0");
+// Claude Sonnet 4.6 — use US geo cross-region ID (us-east-1 has no in-region capacity)
+lambdaFn.addEnvironment("BEDROCK_MODEL_ID", "us.anthropic.claude-sonnet-4-6");
 
-// Bedrock invocation access — wildcard covers all Claude models to avoid EOL churn
+// Bedrock invocation — cover both foundation-model and inference-profile ARN formats
 lambdaFn.addToRolePolicy(
   new PolicyStatement({
     actions: ["bedrock:InvokeModel"],
     resources: [
-      "arn:aws:bedrock:us-east-1::foundation-model/anthropic.claude*",
+      "arn:aws:bedrock:*::foundation-model/anthropic.claude*",
+      "arn:aws:bedrock:*:*:inference-profile/*anthropic.claude*",
     ],
   })
 );
