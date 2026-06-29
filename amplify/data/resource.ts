@@ -2,32 +2,15 @@ import { type ClientSchema, a, defineData } from "@aws-amplify/backend";
 import { screenResume } from "../functions/screenResume/resource";
 
 const schema = a.schema({
-  // ── Custom return type ───────────────────────────────────────────────────
-  AnalysisOutput: a.customType({
-    success: a.boolean(),
-    matchScore: a.float(),
-    skillsScore: a.float(),
-    experienceScore: a.float(),
-    educationScore: a.float(),
-    keywordsFound: a.string(),   // JSON string[]
-    keywordsMissing: a.string(), // JSON string[]
-    strengths: a.string(),       // JSON string[]
-    gaps: a.string(),            // JSON string[]
-    suggestions: a.string(),     // JSON string[]
-    atsTips: a.string(),         // JSON string[]
-    summary: a.string(),
-    error: a.string(),
-  }),
-
-  // ── Model required so AppSync generates a valid Query type ───────────────
-  // Not used in the frontend — exists only to satisfy GraphQL schema rules.
+  // Dummy model so AppSync generates a valid Query type (required by GraphQL spec).
+  // Not used in the frontend.
   UserProfile: a
     .model({
       displayName: a.string(),
     })
     .authorization((allow) => [allow.owner()]),
 
-  // ── Main mutation ────────────────────────────────────────────────────────
+  // Main mutation — inline customType avoids a.ref() resolution issues
   analyzeResume: a
     .mutation()
     .arguments({
@@ -37,7 +20,23 @@ const schema = a.schema({
       company: a.string(),
       requirements: a.string(),
     })
-    .returns(a.ref("AnalysisOutput"))
+    .returns(
+      a.customType({
+        success: a.boolean(),
+        matchScore: a.float(),
+        skillsScore: a.float(),
+        experienceScore: a.float(),
+        educationScore: a.float(),
+        keywordsFound: a.string(),   // JSON-encoded string[]
+        keywordsMissing: a.string(), // JSON-encoded string[]
+        strengths: a.string(),       // JSON-encoded string[]
+        gaps: a.string(),            // JSON-encoded string[]
+        suggestions: a.string(),     // JSON-encoded string[]
+        atsTips: a.string(),         // JSON-encoded string[]
+        summary: a.string(),
+        error: a.string(),
+      })
+    )
     .handler(a.handler.function(screenResume))
     .authorization((allow) => [allow.authenticated()]),
 });
