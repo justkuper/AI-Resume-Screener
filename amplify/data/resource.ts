@@ -2,7 +2,7 @@ import { type ClientSchema, a, defineData } from "@aws-amplify/backend";
 import { screenResume } from "../functions/screenResume/resource";
 
 const schema = a.schema({
-  // Custom return type for the analyzeResume mutation
+  // ── Custom return type ───────────────────────────────────────────────────
   AnalysisOutput: a.customType({
     success: a.boolean(),
     matchScore: a.float(),
@@ -19,6 +19,15 @@ const schema = a.schema({
     error: a.string(),
   }),
 
+  // ── Model required so AppSync generates a valid Query type ───────────────
+  // Not used in the frontend — exists only to satisfy GraphQL schema rules.
+  UserProfile: a
+    .model({
+      displayName: a.string(),
+    })
+    .authorization((allow) => [allow.owner()]),
+
+  // ── Main mutation ────────────────────────────────────────────────────────
   analyzeResume: a
     .mutation()
     .arguments({
